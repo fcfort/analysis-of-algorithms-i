@@ -98,7 +98,7 @@ public class DequeTest {
 		// System.out.println(d);
 	}
 
-	// @Test
+	@Test
 	public void addRemoveLastOrderedTest() {
 		System.out.println("addRemoveLastOrderedTest");
 

@@ -9,21 +9,37 @@ class Deque<Item> implements Iterable<Item> {
 	// Head/tail pointers
 	private Node head;
 	private Node tail;
-	
-	private int length;	
+
+	private int length;
 
 	private class Node {
-		Item i;
-		boolean isSentinel;
-		Node prev, next;
+		private Item i;
+		private boolean isSentinel;
+		private Node prev, next;
 
 		Node() {
 			this.isSentinel = true;
 		}
-		
+
 		Node(Item i) {
 			this.i = i;
 			isSentinel = false;
+		}
+
+		private Item getI() {
+			return i;
+		}
+
+		private boolean isSentinel() {
+			return isSentinel;
+		}
+
+		private Node getPrev() {
+			return prev;
+		}
+
+		private Node getNext() {
+			return next;
 		}
 	}
 
@@ -49,24 +65,25 @@ class Deque<Item> implements Iterable<Item> {
 	// insert the item at the front
 	public void addFirst(Item item) {
 		if (null == item) {
-			throw new NullPointerException();		
+			throw new NullPointerException();
 		}
-		
+
 		Node newNode = new Node(item);
-		
-		if ( length == 0 ) {
+
+		if (length == 0) {
 			newEmptyNode(newNode);
 		} else {
 			// Point sentinel head to new node
 			sentinelHead.next = newNode;
-			// Point new node to the old head node and the head sentinel node  
-			newNode.next = head;			
+			// Point new node to the old head node and
+			// the head sentinel node
+			newNode.next = head;
 			newNode.prev = sentinelHead;
 			// Point the old head back to the new node
 			head.prev = newNode;
 			// Make head point to the new node
 			head = newNode;
-		}		
+		}
 		length++;
 	}
 
@@ -75,16 +92,16 @@ class Deque<Item> implements Iterable<Item> {
 		if (null == item) {
 			throw new NullPointerException();
 		}
-		
+
 		Node newNode = new Node(item);
-		
-		if ( length == 0 ) {
+
+		if (length == 0) {
 			newEmptyNode(newNode);
 		} else {
 			// Point sentinel tail to new node
 			sentinelTail.prev = newNode;
-			// Point new node to the old tail node and the tail sentinel node  
-			newNode.next = sentinelTail;			
+			// Point new node to the old tail node and the tail sentinel node
+			newNode.next = sentinelTail;
 			newNode.prev = tail;
 			// Point the old tail back to the new node
 			tail.next = newNode;
@@ -93,8 +110,8 @@ class Deque<Item> implements Iterable<Item> {
 		}
 		length++;
 	}
-	
-	private void newEmptyNode(Node newNode) {		
+
+	private void newEmptyNode(Node newNode) {
 		// Point head and tail to the new node
 		head = newNode;
 		tail = newNode;
@@ -108,99 +125,93 @@ class Deque<Item> implements Iterable<Item> {
 
 	// delete and return the item at the front
 	public Item removeFirst() {
-		if ( length == 0) {
+		if (length == 0) {
 			throw new NoSuchElementException();
 		}
-				
+
 		Node removedNode = head;
-		
+
 		// Repoint pointers
 		head.next.prev = sentinelHead;
 		sentinelHead.next = head.next;
 		head = sentinelHead.next;
-		
+
 		// Extract item
 		Item i = removedNode.i;
-		
+
 		// Let the object be garbage collected
 		removedNode = null;
-		
+
 		// Decrease length
 		length--;
-		
+
 		return i;
-		
-		
+
 	}
 
 	// delete and return the item at the end
 	public Item removeLast() {
-		if ( length == 0) {
+		if (length == 0) {
 			throw new NoSuchElementException();
 		}
-		
+
 		Node removedNode = tail;
-		
+
 		// Repoint pointers
 		tail.prev.next = sentinelTail;
 		sentinelTail.prev = tail.prev;
 		tail = sentinelTail.prev;
-		
+
 		// Extract item
 		Item i = removedNode.i;
-		
+
 		// Let the object be garbage collected
 		removedNode = null;
-		
+
 		// Decrease length
 		length--;
-		
+
 		return i;
 	}
 
 	private class DequeIterator implements Iterator<Item> {
-        private Node current;
+		private Node current;
 
-        public DequeIterator() {
-        	current = sentinelHead;
-        }
+		public DequeIterator() {
+			current = sentinelHead;
+		}
 
-        public boolean hasNext() {
-            return !current.next.isSentinel;
-        }
+		public boolean hasNext() {
+			return !current.next.isSentinel;
+		}
 
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 
-        public Item next() {
-            if (!hasNext()) throw new NoSuchElementException();            
-            current = current.next;            
-            return current.i;
-        }
+		public Item next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			current = current.next;
+			return current.i;
+		}
 	}
-	
+
 	// return an iterator over items in order from front to end
 	public Iterator<Item> iterator() {
 		return new DequeIterator();
 	}
 
 	/*
-	 public String toString() {
-			Node current = head;
-			
-			if (current == null ) {
-				return "[]";
-			}
-			
-			String s = new String();	
-			while(!current.isSentinel) {
-				System.out.println("Looking at " + current.i.toString());
-				s += current.i.toString() + ", ";
-				current = current.next;
-			}
-			
-			return s;
-		}
+	 * public String toString() { Node current = head;
+	 * 
+	 * if (current == null ) { return "[]"; }
+	 * 
+	 * String s = new String(); while(!current.isSentinel) {
+	 * System.out.println("Looking at " + current.i.toString()); s +=
+	 * current.i.toString() + ", "; current = current.next; }
+	 * 
+	 * return s; }
 	 */
 }
