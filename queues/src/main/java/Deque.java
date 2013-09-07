@@ -31,6 +31,8 @@ class Deque<Item> implements Iterable<Item> {
 	public Deque() {
 		sentinelHead = new Node();
 		sentinelTail = new Node();
+		sentinelHead.next = sentinelTail;
+		sentinelTail.prev = sentinelHead;
 		length = 0;
 	}
 
@@ -82,13 +84,14 @@ class Deque<Item> implements Iterable<Item> {
 			// Point sentinel tail to new node
 			sentinelTail.prev = newNode;
 			// Point new node to the old tail node and the tail sentinel node  
-			newNode.next = tail;			
-			newNode.prev = sentinelTail;
+			newNode.next = sentinelTail;			
+			newNode.prev = tail;
 			// Point the old tail back to the new node
 			tail.next = newNode;
 			// Make tail point to the new node
 			tail = newNode;
-		}		
+		}
+		length++;
 	}
 	
 	private void newEmptyNode(Node newNode) {		
@@ -155,22 +158,49 @@ class Deque<Item> implements Iterable<Item> {
 		return i;
 	}
 
-	// return an iterator over items in order from front to end
-	public Iterator<Item> iterator() {
-		return null;
+	private class DequeIterator implements Iterator<Item> {
+        private Node current;
+
+        public DequeIterator() {
+        	current = sentinelHead;
+        }
+
+        public boolean hasNext() {
+            return !current.next.isSentinel;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();            
+            current = current.next;            
+            return current.i;
+        }
 	}
 	
-	public String toString() {
-		Node current = head;
-		
-		String s = new String();
-		
-		while(!current.isSentinel) {
-			s += current.i.toString() + ", ";
-			current = current.next;
-		}
-		
-		return s;
+	// return an iterator over items in order from front to end
+	public Iterator<Item> iterator() {
+		return new DequeIterator();
 	}
 
+	/*
+	 public String toString() {
+			Node current = head;
+			
+			if (current == null ) {
+				return "[]";
+			}
+			
+			String s = new String();	
+			while(!current.isSentinel) {
+				System.out.println("Looking at " + current.i.toString());
+				s += current.i.toString() + ", ";
+				current = current.next;
+			}
+			
+			return s;
+		}
+	 */
 }
