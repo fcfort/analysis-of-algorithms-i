@@ -9,12 +9,97 @@ import org.junit.Test;
 
 public class RandomizedQueueTest {
 
+	private static final int SMALL = 100;
+	private static final int MEDIUM = 10000;
+	private static final int LARGE = 1000000;
+	
+	private static final String TEST_STRING = "XYZ";
+
+	private enum QueueOperation {
+		ENQUEUE, DEQUEUE, SAMPLE
+	}
+	
+	@Test
+	public void randomOperationTest() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+
+		int size = 0;
+
+		for (int i = 0; i < MEDIUM; i++) {			
+			int randOperationIndex = StdRandom.uniform(3);
+			QueueOperation randOperation = QueueOperation.values()[randOperationIndex];
+			System.out.println("On iteration " + i + " performing operation " + randOperation);
+			switch (randOperation) {
+			case ENQUEUE:
+				d.enqueue(TEST_STRING);
+				size++;
+				break;
+			case DEQUEUE:
+				if (!d.isEmpty()) {
+					assertTrue(d.dequeue().equals(TEST_STRING));
+					size--;
+				}
+				break;
+			case SAMPLE:
+				if (d.size() > 0 ) {
+					d.sample();
+				}
+				assertTrue(d.size() == size);
+				break;
+			}
+		}
+	}
+
+	@Test
+	public void iteratorLargeTest() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+		for (int i = 0; i < LARGE; i++) {
+			d.enqueue(TEST_STRING);
+		}
+		for (String s : d) {
+			assertTrue(s.equals(TEST_STRING));
+		}
+	}
+
+	@Test
+	public void addRemoveLargeTest() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+		for (int i = 0; i < LARGE; i++) {
+			d.enqueue(TEST_STRING);
+		}
+		for (int i = 0; i < LARGE; i++) {
+			assertTrue(d.dequeue().equals(TEST_STRING));
+		}
+	}
+
+	@Test
+	public void addRemoveLarge2x() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+		for (int i = 0; i < LARGE * 2; i++) {
+			d.enqueue(TEST_STRING);
+		}
+		for (int i = 0; i < LARGE * 2; i++) {
+			assertTrue(d.dequeue().equals(TEST_STRING));
+		}
+	}
+
+	@Test
+	public void addRemoveLarge4x() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+		for (int i = 0; i < LARGE * 4; i++) {
+			d.enqueue(TEST_STRING);
+		}
+		for (int i = 0; i < LARGE * 4; i++) {
+			assertTrue(d.dequeue().equals(TEST_STRING));
+		}
+	}
+
 	@Test
 	public void enqueueOneTest() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
-		d.enqueue("");
+		d.enqueue(TEST_STRING);
 		assertTrue(d.size() == 1);
-		assertTrue(d.dequeue().equals(""));
+		// assertTrue(d.dequeue().equals(""));
 	}
 
 	@Test
@@ -22,31 +107,10 @@ public class RandomizedQueueTest {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		// System.out.println(d);
 		assertTrue(d.size() == 0);
-		d.enqueue("1");
+		d.enqueue(TEST_STRING);
 		// System.out.println(d);
-		assertTrue(d.dequeue().equals("1"));
+		assertTrue(d.dequeue().equals(TEST_STRING));
 		// System.out.println(d);
-	}
-
-	@Test
-	public void adddequeueOrderedTest() {
-		System.out.println("adddequeueOrderedTest");
-
-		RandomizedQueue<Integer> d = new RandomizedQueue<Integer>();
-		int n = 10;
-		for (int i = 0; i < n; i++) {
-			System.out.println("Adding " + i);
-			d.enqueue(i);
-		}
-
-		// System.out.println(d);
-
-		int removed;
-		for (int i = n - 1; i >= 0; i--) {
-			removed = d.dequeue();
-			System.out.println("Removing " + removed);
-			assertTrue(removed == i);
-		}
 	}
 
 	@Test
@@ -62,7 +126,7 @@ public class RandomizedQueueTest {
 	public void zeroLengthTest() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		assertTrue(d.size() == 0);
-		d.enqueue("");
+		d.enqueue(TEST_STRING);
 		d.dequeue();
 		assertTrue(d.size() == 0);
 	}
@@ -71,10 +135,20 @@ public class RandomizedQueueTest {
 	public void addLengthTest() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		assertTrue(d.size() == 0);
-		d.enqueue("");
+		d.enqueue(TEST_STRING);
 		assertTrue(d.size() == 1);
-		d.enqueue("");
+		d.enqueue(TEST_STRING);
 		assertTrue(d.size() == 2);
+	}
+
+	@Test
+	public void sampleTest() {
+		RandomizedQueue<String> d = new RandomizedQueue<String>();
+		d.enqueue(TEST_STRING);
+		assertTrue(d.sample().equals(TEST_STRING));
+		assertTrue(d.size() == 1);
+		assertTrue(d.sample().equals(TEST_STRING));
+		assertTrue(d.size() == 1);
 	}
 
 	@Test
@@ -83,7 +157,7 @@ public class RandomizedQueueTest {
 
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		for (int i = 0; i < n; i++) {
-			d.enqueue("");
+			d.enqueue(TEST_STRING);
 		}
 		assertTrue(d.size() == n);
 	}
@@ -98,27 +172,27 @@ public class RandomizedQueueTest {
 		}
 
 		Set<Integer> s = new HashSet<Integer>();
-		
+
 		for (Integer item : d) {
 			s.add(item);
 			System.out.println("Iterator has " + item);
 		}
-		
+
 		int i = 0;
-		for (Integer item: s) {
+		for (Integer item : s) {
 			assertTrue(item == i++);
 		}
 
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void zeroLengthdequeueException() {
+	public void zeroLengthDequeueException() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		d.dequeue();
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void nullenqueueException() {
+	public void nullEnqueueException() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
 		d.enqueue(null);
 	}
@@ -138,7 +212,7 @@ public class RandomizedQueueTest {
 	@Test(expected = NoSuchElementException.class)
 	public void nextNextException() {
 		RandomizedQueue<String> d = new RandomizedQueue<String>();
-		d.enqueue("");
+		d.enqueue(TEST_STRING);
 		Iterator<String> i = d.iterator();
 		i.next();
 		i.next();
