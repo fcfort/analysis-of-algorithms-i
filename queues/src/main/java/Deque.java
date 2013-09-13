@@ -1,7 +1,7 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class Deque<Item> implements Iterable<Item> {
+public class Deque<Item> implements Iterable<Item> {
 
     // Sentinels
     private Node sentinelHead;
@@ -124,6 +124,8 @@ class Deque<Item> implements Iterable<Item> {
         Item i = removedNode.i;
 
         // Let the object be garbage collected
+        removedNode.prev = null;
+        removedNode.next = null;
         removedNode = null;
 
         // Decrease length
@@ -150,6 +152,8 @@ class Deque<Item> implements Iterable<Item> {
         Item i = removedNode.i;
 
         // Let the object be garbage collected
+        removedNode.prev = null;
+        removedNode.next = null;
         removedNode = null;
 
         // Decrease length
